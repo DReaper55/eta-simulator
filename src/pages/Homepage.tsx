@@ -1,6 +1,12 @@
+import CanvasScene from "../components/Homepage/CanvasScene";
+import CityGrid from "../components/Homepage/CityGrid";
+
 const Homepage = () => {
     return (
-        <div></div>
+        <div className='h-[100vh]'>
+            {/* <CityGrid /> */}
+            <CanvasScene />
+        </div>
     )
 }
 
