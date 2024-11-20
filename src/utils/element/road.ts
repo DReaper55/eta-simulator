@@ -9,15 +9,23 @@ export class RoadElement implements ElementUtils<Road> {
   create(data: Road): void {
     store.dispatch(addRoad(data));
 
-    const geometry = new THREE.PlaneGeometry(
+    const height = 0.4;
+    const length = Math.sqrt(
+      Math.pow(data.end[0] - data.start[0], 2) +
+      Math.pow(data.end[1] - data.start[1], 2) +
+      Math.pow(data.end[2] - data.start[2], 2)
+    );
+
+    const geometry = new THREE.BoxGeometry(
+      length,
       data.width,
-      new THREE.Vector3().subVectors(new THREE.Vector3(...data.end), new THREE.Vector3(...data.start)).length()
+      height
     );
     const material = new THREE.MeshStandardMaterial({ color: "gray" });
     const road = new THREE.Mesh(geometry, material);
     road.position.set(
       (data.start[0] + data.end[0]) / 2,
-      (data.start[1] + data.end[1]) / 2,
+      height / 2,
       (data.start[2] + data.end[2]) / 2
     );
     gridCanvas.scene?.add(road);
