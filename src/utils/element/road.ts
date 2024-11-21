@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { store } from "../../data/redux/store/reduxStore";
 import { addRoad, modifyRoad, removeRoad, Road } from "../../data/redux/reducers/roadReducer";
 import { gridCanvas } from "../canvas";
+import { ElementType } from "../../constants/element";
 
 
 export class RoadElement implements ElementUtils<Road> {
@@ -37,6 +38,7 @@ export class RoadElement implements ElementUtils<Road> {
       height / 2,
       (data.start[2] + data.end[2]) / 2
     );
+    road.userData = {info: data.info, type: ElementType.Road}
 
     gridCanvas.scene?.add(road);
   }

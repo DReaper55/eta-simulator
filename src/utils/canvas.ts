@@ -8,11 +8,14 @@ import { RoadElement } from "./element/road";
 import { BikeElement } from "./element/bike";
 import { Road } from "../data/redux/reducers/roadReducer";
 import { Bike } from "../data/redux/reducers/bikeReducer";
+import { CanvasEvent } from "./event";
 
 export class GridCanvas {
   scene: THREE.Scene | undefined;
   camera: THREE.Camera | undefined;
   renderer: THREE.WebGLRenderer | undefined;
+  
+  event: CanvasEvent | undefined;
 
   cityElement = new CityElement();
   buildingElement = new BuildingElement();
@@ -36,6 +39,8 @@ export class GridCanvas {
       const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
       directionalLight.position.set(5, 10, 7.5);
       this.scene.add(directionalLight);
+
+      this.event = new CanvasEvent();
 
       // Add city and elements to the canvas
       this.addInitialStructures();
@@ -82,6 +87,7 @@ export class GridCanvas {
       position: [0, 0, 0],
       size: [2, 3, 2],
       color: "blue",
+      info: "Building 1"
     } as Building;
 
     const building2 = {
@@ -89,6 +95,7 @@ export class GridCanvas {
       position: [5, 0, 0],
       size: [2, 8, 2],
       color: "blue",
+      info: "Building 2"
     } as Building;
 
     const building3 = {
@@ -96,6 +103,7 @@ export class GridCanvas {
       position: [0, 0, 5],
       size: [3, 4, 2],
       color: "blue",
+      info: "Building 3"
     } as Building;
 
     const building4 = {
@@ -103,6 +111,7 @@ export class GridCanvas {
       position: [0, 0, -5],
       size: [3, 4, 2],
       color: "blue",
+      info: "Building 4"
     } as Building;
 
     const building5 = {
@@ -110,6 +119,7 @@ export class GridCanvas {
       position: [-8, 0, 0],
       size: [3, 5, 5],
       color: "blue",
+      info: "Building 5"
     } as Building;
 
     // Add buildings to scene
@@ -133,6 +143,7 @@ export class GridCanvas {
       start: [0, 0.2, 0], // building1
       end: [5, 0.2, 0], // building2
       width: .3,
+      info: 'Building1 -> Building2'
     } as Road;
 
     const road2 = {
@@ -140,6 +151,7 @@ export class GridCanvas {
       start: [0, 0.2, 0], // building1
       end: [0, 0.2, 5], // building3
       width: .3,
+      info: 'Building1 -> Building3'
     } as Road;
 
     const road4 = {
@@ -147,6 +159,7 @@ export class GridCanvas {
       start: [0, 0.2, 0], // building1
       end: [0, 0.2, -5], // building4
       width: .3,
+      info: 'Building1 -> Building4'
     } as Road;
 
     const road3 = {
@@ -154,6 +167,7 @@ export class GridCanvas {
       start: [0, 0.2, 0], // building1
       end: [-8, 0.2, 0], // building5
       width: .3,
+      info: 'Building1 -> Building5'
     } as Road;
 
     this.roadElement.create(road1);

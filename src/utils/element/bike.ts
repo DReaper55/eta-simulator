@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { store } from "../../data/redux/store/reduxStore";
 import { addBike, Bike, modifyBike, removeBike } from "../../data/redux/reducers/bikeReducer";
 import { gridCanvas } from "../canvas";
+import { ElementType } from "../../constants/element";
 
 
 export class BikeElement implements ElementUtils<Bike> {
@@ -14,6 +15,7 @@ export class BikeElement implements ElementUtils<Bike> {
     const bike = new THREE.Mesh(geometry, material);
     bike.name = data.id;
     bike.position.set(...data.position);
+    bike.userData = {info: data.info, type: ElementType.Bike}
     gridCanvas.scene?.add(bike);
   }
 

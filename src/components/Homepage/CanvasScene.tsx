@@ -3,6 +3,7 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { gridCanvas } from "../../utils/canvas";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import HoverPopup from "./HoverPopup";
 
 
 const SceneManipulator: React.FC = () => {  
@@ -35,7 +36,6 @@ const CanvasScene: React.FC = () => {
       <SceneManipulator />
 
       <gridHelper args={[10, 10, new THREE.Color("gray"), new THREE.Color("white")]} />
-
     </Canvas>
   );
 };

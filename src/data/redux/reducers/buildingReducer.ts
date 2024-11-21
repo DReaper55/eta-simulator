@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ElementType } from "../../../constants/element";
 
 export interface Building {
   id: string;
@@ -6,6 +7,8 @@ export interface Building {
   position: [number, number, number];
   size: [number, number, number];
   color: string;
+  info?: string;
+  type: string;
 }
 
 interface BuildingPayload {
@@ -26,12 +29,12 @@ const buildingSlice = createSlice({
   initialState,
   reducers: {
     addBuilding: (state, action: PayloadAction<Building>) => {
-      state.list.push(action.payload);
+      state.list.push({...action.payload, type: ElementType.Building});
     },
     modifyBuilding: (state, action: PayloadAction<BuildingPayload>) => {
       state.list.map((building) =>
         building.id === action.payload.id
-          ? { ...building, ...action.payload.data }
+          ? { ...building, ...action.payload.data, type: ElementType.Building }
           : building
       );
     },

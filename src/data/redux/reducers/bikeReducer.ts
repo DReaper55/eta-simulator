@@ -1,9 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ElementType } from "../../../constants/element";
 
 export interface Bike {
   id: string;
   position: [number, number, number];
   roadId: string;
+  info?: string;
+  type: string;
 }
 
 interface BikePayload {
@@ -24,12 +27,12 @@ const bikesSlice = createSlice({
   initialState,
   reducers: {
     addBike: (state, action: PayloadAction<Bike>) => {
-      state.list.push(action.payload);
+      state.list.push({...action.payload, type: ElementType.Bike});
     },
     modifyBike: (state, action: PayloadAction<BikePayload>) => {
       state.list.map((bike) =>
         bike.id === action.payload.id
-          ? { ...bike, ...action.payload.data }
+          ? { ...bike, ...action.payload.data, type: ElementType.Bike }
           : bike
       );
     },

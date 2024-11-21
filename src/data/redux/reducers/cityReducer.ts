@@ -1,10 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ElementType } from "../../../constants/element";
 
 export interface City {
   id: string;
   grid: number[][];
   position: [number, number, number];
   buildings: string[]; // IDs of buildings in this city
+  type: string;
+  info?: string;
 }
 
 interface CityPayload {
@@ -25,12 +28,12 @@ const citiesSlice = createSlice({
   initialState,
   reducers: {
     addCity: (state, action: PayloadAction<City>) => {
-      state.list.push(action.payload);
+      state.list.push({...action.payload, type: ElementType.City});
     },
     modifyCity: (state, action: PayloadAction<CityPayload>) => {
         state.list.map((city) =>
           city.id === action.payload.id
-            ? { ...city, ...action.payload.data }
+            ? { ...city, ...action.payload.data, type: ElementType.City }
             : city
         );
       },

@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { store } from "../../data/redux/store/reduxStore";
 import { addBuilding, Building, modifyBuilding, removeBuilding } from "../../data/redux/reducers/buildingReducer";
 import { gridCanvas } from "../canvas";
+import { ElementType } from "../../constants/element";
 
 
 export class BuildingElement implements ElementUtils<Building> {
@@ -15,6 +16,7 @@ export class BuildingElement implements ElementUtils<Building> {
     const material = new THREE.MeshStandardMaterial({ color: data.color });
     const building = new THREE.Mesh(geometry, material);
     building.position.set(...data.position);
+    building.userData = {info: data.info, type: ElementType.Building}
     gridCanvas.scene?.add(building);
   }
 
