@@ -28,16 +28,13 @@ export class BikeElement implements ElementUtils<Bike> {
   animateBike(start: [number, number, number], end: [number, number, number], speed: number, bikeId?: string) {
     if (!gridCanvas.scene || !gridCanvas.camera || !gridCanvas.renderer) return;
 
-    // const bikeGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-    // const bikeMaterial = new THREE.MeshStandardMaterial({ color: "red" });
-    // const bike = new THREE.Mesh(bikeGeometry, bikeMaterial);
-    // gridCanvas.scene.add(bike);
-
     // Find the bike in the scene
-  const bike = gridCanvas.scene.children.find((obj) => obj.name === bikeId);
+  let bike = gridCanvas.scene.children.find((obj) => obj.name === bikeId);
   if (!bike) {
-    console.error(`Bike with ID "${bikeId}" not found in the scene.`);
-    return;
+    const bikeGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+    const bikeMaterial = new THREE.MeshStandardMaterial({ color: "red" });
+    bike = new THREE.Mesh(bikeGeometry, bikeMaterial);
+    gridCanvas.scene.add(bike);
   }
 
     const startVec = new THREE.Vector3(...start);

@@ -6,7 +6,7 @@ import { gridCanvas } from "../canvas";
 
 
 export class RoadElement implements ElementUtils<Road> {
-  create(data: Road): void {
+  create(data: Road, isHorizontal: boolean = false): void {
     store.dispatch(addRoad(data));
 
     const height = 0.4;
@@ -16,11 +16,20 @@ export class RoadElement implements ElementUtils<Road> {
       Math.pow(data.end[2] - data.start[2], 2)
     );
 
-    const geometry = new THREE.BoxGeometry(
+    let geometry = new THREE.BoxGeometry(
       length,
       data.width,
       height
     );
+
+    if(isHorizontal) {
+      geometry = new THREE.BoxGeometry(
+        data.width,
+        height,
+        length,
+      )
+    }
+
     const material = new THREE.MeshStandardMaterial({ color: "gray" });
     const road = new THREE.Mesh(geometry, material);
     road.position.set(
@@ -28,6 +37,7 @@ export class RoadElement implements ElementUtils<Road> {
       height / 2,
       (data.start[2] + data.end[2]) / 2
     );
+
     gridCanvas.scene?.add(road);
   }
 
