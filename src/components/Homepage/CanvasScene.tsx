@@ -3,7 +3,6 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { gridCanvas } from "../../utils/canvas";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import HoverPopup from "./HoverPopup";
 
 
 const SceneManipulator: React.FC = () => {  

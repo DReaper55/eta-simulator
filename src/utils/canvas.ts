@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { CityElement } from "./element/city";
 import { City } from "../data/redux/reducers/cityReducer";
-import getRandomId from "./randomIdGenerator";
 import { Building } from "../data/redux/reducers/buildingReducer";
 import { BuildingElement } from "./element/building";
 import { RoadElement } from "./element/road";
@@ -9,7 +8,6 @@ import { BikeElement } from "./element/bike";
 import { Road } from "../data/redux/reducers/roadReducer";
 import { Bike } from "../data/redux/reducers/bikeReducer";
 import { CanvasEvent } from "./event";
-import { buildGraph, findShortestPath } from "./buildPathGraph";
 
 export class GridCanvas {
   scene: THREE.Scene | undefined;
