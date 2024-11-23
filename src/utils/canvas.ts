@@ -9,6 +9,7 @@ import { BikeElement } from "./element/bike";
 import { Road } from "../data/redux/reducers/roadReducer";
 import { Bike } from "../data/redux/reducers/bikeReducer";
 import { CanvasEvent } from "./event";
+import { buildGraph, findShortestPath } from "./buildPathGraph";
 
 export class GridCanvas {
   scene: THREE.Scene | undefined;
@@ -64,21 +65,18 @@ export class GridCanvas {
     const buildings = this.generateBuildings(cityData)
 
     // Add roads connecting buildings
-    const roads = this.generateRoads(buildings);
+    this.generateRoads(buildings);
 
     // Add a bike on the road
-    // const bike1 = {
-    //   id: "bike1",
-    //   position: [3.5, 0, 0],
-    //   roadId: "road1",
-    // } as Bike;
-    // this.bikeElement.create(bike1);
+    const bike1 = {
+      id: "bike1",
+      position: [0, 0, 0],
+      roadId: "road1",
+    } as Bike;
+    this.bikeElement.create(bike1);
 
-    // Add bike
-    this.bikeElement.animateBike(roads[0].end, roads[0].start, .05);
-    this.bikeElement.animateBike(roads[1].end, roads[1].start, .05);
-    this.bikeElement.animateBike(roads[2].end, roads[2].start, .05);
-    this.bikeElement.animateBike(roads[3].end, roads[3].start, .05);
+    // Move a bike along a path
+    this.bikeElement.moveBikeAlongPath(buildings[1], buildings[4], .08, bike1.id)
   }
 
   private generateBuildings(cityData: City): Building[] {
@@ -89,7 +87,7 @@ export class GridCanvas {
       position: [0, 0, 0],
       size: [2, 3, 2],
       color: "blue",
-      info: "Building 1"
+      info: "Building 0"
     } as Building;
 
     buildings[1] = {
@@ -97,7 +95,7 @@ export class GridCanvas {
       position: [5, 0, 0],
       size: [2, 8, 2],
       color: "blue",
-      info: "Building 2"
+      info: "Building 1"
     } as Building;
 
     buildings[2] = {
@@ -105,7 +103,7 @@ export class GridCanvas {
       position: [0, 0, 5],
       size: [3, 4, 2],
       color: "blue",
-      info: "Building 3"
+      info: "Building 2"
     } as Building;
 
     buildings[3] = {
@@ -113,7 +111,7 @@ export class GridCanvas {
       position: [0, 0, -5],
       size: [3, 4, 2],
       color: "blue",
-      info: "Building 4"
+      info: "Building 3"
     } as Building;
 
     buildings[4] = {
@@ -121,7 +119,7 @@ export class GridCanvas {
       position: [-8, 0, 0],
       size: [3, 5, 5],
       color: "blue",
-      info: "Building 5"
+      info: "Building 4"
     } as Building;
 
     // Add buildings to scene
