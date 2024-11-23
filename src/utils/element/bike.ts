@@ -49,7 +49,7 @@ export class BikeElement implements ElementUtils<Bike> {
       if (progress < distance) {
         progress += speed;
         const newPosition = startVec.clone().add(direction.clone().multiplyScalar(progress));
-        bike.position.set(newPosition.x, newPosition.y, newPosition.z);
+        bike.position.set(newPosition.x, (newPosition.y + .5), newPosition.z);
 
         // Update bike's position in database
         const bikeDB = store.getState().bikes.list.find(b => b.id === bikeId);

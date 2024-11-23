@@ -61,10 +61,10 @@ export class GridCanvas {
     this.cityElement.create(cityData);
 
     // Add buildings to the city
-    this.generateBuildings(cityData)
+    const buildings = this.generateBuildings(cityData)
 
     // Add roads connecting buildings
-    const roads = this.generateRoads();
+    const roads = this.generateRoads(buildings);
 
     // Add a bike on the road
     // const bike1 = {
@@ -81,41 +81,43 @@ export class GridCanvas {
     this.bikeElement.animateBike(roads[3].end, roads[3].start, .05);
   }
 
-  private generateBuildings(cityData: City) {
-    const building1 = {
-      id: getRandomId(),
+  private generateBuildings(cityData: City): Building[] {
+    const buildings = [] as Building[]
+    
+    buildings[0] = {
+      id: '1',
       position: [0, 0, 0],
       size: [2, 3, 2],
       color: "blue",
       info: "Building 1"
     } as Building;
 
-    const building2 = {
-      id: getRandomId(),
+    buildings[1] = {
+      id: '2',
       position: [5, 0, 0],
       size: [2, 8, 2],
       color: "blue",
       info: "Building 2"
     } as Building;
 
-    const building3 = {
-      id: getRandomId(),
+    buildings[2] = {
+      id: '3',
       position: [0, 0, 5],
       size: [3, 4, 2],
       color: "blue",
       info: "Building 3"
     } as Building;
 
-    const building4 = {
-      id: getRandomId(),
+    buildings[3] = {
+      id: '4',
       position: [0, 0, -5],
       size: [3, 4, 2],
       color: "blue",
       info: "Building 4"
     } as Building;
 
-    const building5 = {
-      id: getRandomId(),
+    buildings[4] = {
+      id: '5',
       position: [-8, 0, 0],
       size: [3, 5, 5],
       color: "blue",
@@ -123,59 +125,42 @@ export class GridCanvas {
     } as Building;
 
     // Add buildings to scene
-    this.buildingElement.create(building1);
-    this.buildingElement.create(building2);
-    this.buildingElement.create(building3);
-    this.buildingElement.create(building4);
-    this.buildingElement.create(building5);
-
+    this.buildingElement.create(buildings[0]);
+    this.buildingElement.create(buildings[1]);
+    this.buildingElement.create(buildings[2]);
+    this.buildingElement.create(buildings[3]);
+    this.buildingElement.create(buildings[4]);
 
     // Add buildings to city
     this.cityElement.modify(cityData.id, {
       ...cityData,
-      buildings: [...cityData.buildings, building1.id, building2.id, building3.id, building4.id, building5.id],
+      buildings: [...cityData.buildings, buildings[0].id, buildings[1].id, buildings[2].id, buildings[3].id, buildings[4].id],
     });
+
+    return buildings
   }
 
-  private generateRoads(): Road[] {
-    const road1 = {
-      id: "road1",
-      start: [0, 0.2, 0], // building1
-      end: [5, 0.2, 0], // building2
-      width: .3,
-      info: 'Building1 -> Building2'
-    } as Road;
+  private generateRoads(buildings: Building[]): Road[] {
+    const building1 = buildings.find(b => b.id === '1');
+    const building2 = buildings.find(b => b.id === '2');
+    const building3 = buildings.find(b => b.id === '3');
+    const building4 = buildings.find(b => b.id === '4');
+    const building5 = buildings.find(b => b.id === '5');
 
-    const road2 = {
-      id: "road2",
-      start: [0, 0.2, 0], // building1
-      end: [0, 0.2, 5], // building3
-      width: .3,
-      info: 'Building1 -> Building3'
-    } as Road;
+    const roads = [] as Road[]
 
-    const road4 = {
-      id: "road4",
-      start: [0, 0.2, 0], // building1
-      end: [0, 0.2, -5], // building4
-      width: .3,
-      info: 'Building1 -> Building4'
-    } as Road;
+    roads[0] = this.roadElement.connectBuildings(building1!, building2!);
+    roads[1] = this.roadElement.connectBuildings(building1!, building3!);
+    roads[2] = this.roadElement.connectBuildings(building1!, building4!);
+    roads[3] = this.roadElement.connectBuildings(building1!, building5!);
 
-    const road3 = {
-      id: "road3",
-      start: [0, 0.2, 0], // building1
-      end: [-8, 0.2, 0], // building5
-      width: .3,
-      info: 'Building1 -> Building5'
-    } as Road;
+    roads[4] = this.roadElement.connectBuildings(building2!, building3!);
+    roads[5] = this.roadElement.connectBuildings(building2!, building4!);
 
-    this.roadElement.create(road1);
-    this.roadElement.create(road2, true);
-    this.roadElement.create(road4, true);
-    this.roadElement.create(road3);
+    roads[6] = this.roadElement.connectBuildings(building3!, building5!);
+    roads[7] = this.roadElement.connectBuildings(building4!, building5!);
 
-    return [road1, road2, road3, road4]
+    return roads;
   }
 }
 
