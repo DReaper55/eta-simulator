@@ -3,6 +3,7 @@ import citiesReducer from "../reducers/cityReducer";
 import roadsReducer from "../reducers/roadReducer";
 import bikesReducer from "../reducers/bikeReducer";
 import buildingReducer from "../reducers/buildingReducer";
+import animationReducer from "../reducers/animationReducer";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     roads: roadsReducer,
     bikes: bikesReducer,
     buildings: buildingReducer,
+    animations: animationReducer,
   },
 });
 

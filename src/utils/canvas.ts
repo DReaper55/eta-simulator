@@ -70,6 +70,7 @@ export class GridCanvas {
       id: "bike1",
       position: [0, 0, 0],
       roadId: "road1",
+      info: 'Bike 1'
     } as Bike;
     this.bikeElement.create(bike1);
 

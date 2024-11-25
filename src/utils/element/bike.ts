@@ -61,6 +61,11 @@ export class BikeElement implements ElementUtils<Bike> {
     let progress = 0;
 
     const animate = () => {
+      if(store.getState().animations.isPaused){
+        requestAnimationFrame(animate);
+        return;
+      }
+
       if (progress < distance) {
         progress += speed;
         const newPosition = startVec
