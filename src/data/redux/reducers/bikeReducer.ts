@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ElementType } from "../../../constants/element";
+import { Order } from "../../../models/order";
 
 export interface Bike {
   id: string;
@@ -7,6 +8,7 @@ export interface Bike {
   roadId: string;
   info?: string;
   type: string;
+  orders: Order[];
 }
 
 interface BikePayload {

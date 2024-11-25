@@ -8,12 +8,14 @@ import { BikeElement } from "./element/bike";
 import { Road } from "../data/redux/reducers/roadReducer";
 import { Bike } from "../data/redux/reducers/bikeReducer";
 import { CanvasEvent } from "./event";
+import { Order } from "../models/order";
+import { generateUUID } from "three/src/math/MathUtils.js";
 
 export class GridCanvas {
   scene: THREE.Scene | undefined;
   camera: THREE.Camera | undefined;
   renderer: THREE.WebGLRenderer | undefined;
-  
+
   event: CanvasEvent | undefined;
 
   cityElement = new CityElement();
@@ -60,7 +62,7 @@ export class GridCanvas {
     this.cityElement.create(cityData);
 
     // Add buildings to the city
-    const buildings = this.generateBuildings(cityData)
+    const buildings = this.generateBuildings(cityData);
 
     // Add roads connecting buildings
     this.generateRoads(buildings);
@@ -70,55 +72,89 @@ export class GridCanvas {
       id: "bike1",
       position: [0, 0, 0],
       roadId: "road1",
-      info: 'Bike 1'
+      info: "Bike 1",
+      orders: this.generateOrders(buildings, 2),
     } as Bike;
     this.bikeElement.create(bike1);
 
     // Move a bike along a path
-    this.bikeElement.moveBikeAlongPath(buildings[1], buildings[4], .08, bike1.id)
+    this.bikeElement.moveBikeAlongPath(
+      buildings[1],
+      buildings[4],
+      0.08,
+      bike1.id
+    );
+  }
+
+  private generateOrders(buildings: Building[], length = 3): Order[] {
+    if (buildings.length < 2) {
+      throw new Error(
+        "At least two buildings are required to create an order."
+      );
+    }
+
+    const orders = [] as Order[];
+
+    // Helper function to get a random building that is not the specified building
+    const getRandomBuilding = (excludeBuilding: Building): Building => {
+      let building: Building;
+      do {
+        building = buildings[Math.floor(Math.random() * buildings.length)];
+      } while (building === excludeBuilding);
+      return building;
+    };
+
+    for (let i = 0; i < length; i++) {
+      const pickup = buildings[Math.floor(Math.random() * buildings.length)];
+      const dropOff = getRandomBuilding(pickup);
+      const order = { id: generateUUID(), pickup, dropOff };
+      orders.push(order);
+    }
+
+    return orders;
   }
 
   private generateBuildings(cityData: City): Building[] {
-    const buildings = [] as Building[]
-    
+    const buildings = [] as Building[];
+
     buildings[0] = {
-      id: '1',
+      id: "1",
       position: [0, 0, 0],
       size: [2, 3, 2],
       color: "blue",
-      info: "Building 0"
+      info: "Building 0",
     } as Building;
 
     buildings[1] = {
-      id: '2',
+      id: "2",
       position: [5, 0, 0],
       size: [2, 8, 2],
       color: "blue",
-      info: "Building 1"
+      info: "Building 1",
     } as Building;
 
     buildings[2] = {
-      id: '3',
+      id: "3",
       position: [0, 0, 5],
       size: [3, 4, 2],
       color: "blue",
-      info: "Building 2"
+      info: "Building 2",
     } as Building;
 
     buildings[3] = {
-      id: '4',
+      id: "4",
       position: [0, 0, -5],
       size: [3, 4, 2],
       color: "blue",
-      info: "Building 3"
+      info: "Building 3",
     } as Building;
 
     buildings[4] = {
-      id: '5',
+      id: "5",
       position: [-8, 0, 0],
       size: [3, 5, 5],
       color: "blue",
-      info: "Building 4"
+      info: "Building 4",
     } as Building;
 
     // Add buildings to scene
@@ -131,20 +167,27 @@ export class GridCanvas {
     // Add buildings to city
     this.cityElement.modify(cityData.id, {
       ...cityData,
-      buildings: [...cityData.buildings, buildings[0].id, buildings[1].id, buildings[2].id, buildings[3].id, buildings[4].id],
+      buildings: [
+        ...cityData.buildings,
+        buildings[0].id,
+        buildings[1].id,
+        buildings[2].id,
+        buildings[3].id,
+        buildings[4].id,
+      ],
     });
 
-    return buildings
+    return buildings;
   }
 
   private generateRoads(buildings: Building[]): Road[] {
-    const building1 = buildings.find(b => b.id === '1');
-    const building2 = buildings.find(b => b.id === '2');
-    const building3 = buildings.find(b => b.id === '3');
-    const building4 = buildings.find(b => b.id === '4');
-    const building5 = buildings.find(b => b.id === '5');
+    const building1 = buildings.find((b) => b.id === "1");
+    const building2 = buildings.find((b) => b.id === "2");
+    const building3 = buildings.find((b) => b.id === "3");
+    const building4 = buildings.find((b) => b.id === "4");
+    const building5 = buildings.find((b) => b.id === "5");
 
-    const roads = [] as Road[]
+    const roads = [] as Road[];
 
     roads[0] = this.roadElement.connectBuildings(building1!, building2!);
     roads[1] = this.roadElement.connectBuildings(building1!, building3!);

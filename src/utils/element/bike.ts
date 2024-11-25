@@ -17,7 +17,18 @@ export class BikeElement implements ElementUtils<Bike> {
     store.dispatch(addBike(data));
 
     const geometry = new THREE.SphereGeometry(0.2, 16, 16);
-    const material = new THREE.MeshStandardMaterial({ color: "red" });
+
+    let color = 'green';
+
+    if(data.orders.length === 2){
+      color = 'blue';
+    }
+
+    if(data.orders.length === 3){
+      color = 'red';
+    }
+
+    const material = new THREE.MeshStandardMaterial({ color: color });
     const bike = new THREE.Mesh(geometry, material);
     bike.name = data.id;
     bike.position.set(...data.position);
