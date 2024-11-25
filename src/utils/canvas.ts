@@ -67,23 +67,30 @@ export class GridCanvas {
     // Add roads connecting buildings
     this.generateRoads(buildings);
 
-    // Add a bike on the road
-    const bike1 = {
-      id: "bike1",
-      position: [0, 0, 0],
-      roadId: "road1",
-      info: "Bike 1",
-      orders: this.generateOrders(buildings, 2),
-    } as Bike;
-    this.bikeElement.create(bike1);
+    // Add bikes on the road
+    const bikes = this.generateBikes(buildings)
 
-    // Move a bike along a path
-    this.bikeElement.moveBikeAlongPath(
-      buildings[1],
-      buildings[4],
-      0.08,
-      bike1.id
-    );
+    // Move bikes through orders
+    bikes.forEach(bike => this.bikeElement.moveBikeThroughOrders(bike, 0.08));
+  }
+
+  private generateBikes(buildings: Building[], length = 2): Bike[] {
+    const bikes = [] as Bike[];
+
+    for(let i = 0; i < length; i++){
+      const bike = {
+        id: `bike${i}`,
+        position: [0, 0, 0],
+        roadId: "road1",
+        info: `Bike ${i}`,
+        orders: this.generateOrders(buildings, (Math.floor(Math.random() * 2) + 1)),
+      } as Bike;
+
+      bikes.push(bike);
+      this.bikeElement.create(bike);
+    }
+
+    return bikes;
   }
 
   private generateOrders(buildings: Building[], length = 3): Order[] {

@@ -18,14 +18,14 @@ export class BikeElement implements ElementUtils<Bike> {
 
     const geometry = new THREE.SphereGeometry(0.2, 16, 16);
 
-    let color = 'green';
+    let color = "green";
 
-    if(data.orders.length === 2){
-      color = 'blue';
+    if (data.orders.length === 2) {
+      color = "blue";
     }
 
-    if(data.orders.length === 3){
-      color = 'red';
+    if (data.orders.length === 3) {
+      color = "red";
     }
 
     const material = new THREE.MeshStandardMaterial({ color: color });
@@ -44,111 +44,114 @@ export class BikeElement implements ElementUtils<Bike> {
     store.dispatch(removeBike(id));
   }
 
-  private animateBike(
+  private async animateBike(
     start: [number, number, number],
     end: [number, number, number],
     speed: number,
     bikeId: string
-  ) {
+  ): Promise<void> {
     if (!gridCanvas.scene || !gridCanvas.camera || !gridCanvas.renderer) return;
 
-    // Find the bike in the scene
     const bike = gridCanvas.scene.children.find((obj) => obj.name === bikeId);
-    // if (!bike) {
-    //   const bikeGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-    //   const bikeMaterial = new THREE.MeshStandardMaterial({ color: "red" });
-    //   bike = new THREE.Mesh(bikeGeometry, bikeMaterial);
-    //   gridCanvas.scene.add(bike);
-    // }
+    if (!bike) return;
 
-    if(!bike) return;
+    return new Promise((resolve) => {
+      const startVec = new THREE.Vector3(...start);
+      const endVec = new THREE.Vector3(...end);
+      const direction = new THREE.Vector3()
+        .subVectors(endVec, startVec)
+        .normalize();
+      const distance = startVec.distanceTo(endVec);
+      let progress = 0;
 
-    const startVec = new THREE.Vector3(...start);
-    const endVec = new THREE.Vector3(...end);
-    const direction = new THREE.Vector3()
-      .subVectors(endVec, startVec)
-      .normalize();
-    const distance = startVec.distanceTo(endVec);
-    let progress = 0;
+      const animate = () => {
+        if (store.getState().animations.isPaused) {
+          requestAnimationFrame(animate);
+          return;
+        }
 
-    const animate = () => {
-      if(store.getState().animations.isPaused){
-        requestAnimationFrame(animate);
-        return;
-      }
+        if (progress < distance) {
+          progress += speed;
+          const newPosition = startVec
+            .clone()
+            .add(direction.clone().multiplyScalar(progress));
 
-      if (progress < distance) {
-        progress += speed;
-        const newPosition = startVec
-          .clone()
-          .add(direction.clone().multiplyScalar(progress));
-        bike.position.set(newPosition.x, newPosition.y + 0.5, newPosition.z);
+          bike.position.set(newPosition.x, newPosition.y + 0.5, newPosition.z);
 
-        // Update bike's position in database
-        const bikeDB = store.getState().bikes.list.find((b) => b.id === bikeId);
-        store.dispatch(
-          modifyBike({
-            id: bikeId!,
-            data: {
-              ...bikeDB,
-              position: [newPosition.x, (newPosition.y + 0.5), newPosition.z],
-            },
-          })
-        );
+          const updatedPosition = [
+            newPosition.x,
+            newPosition.y + 0.5,
+            newPosition.z,
+          ] as [number, number, number];
+          store.dispatch(
+            modifyBike({
+              id: bikeId,
+              data: {
+                position: updatedPosition,
+              },
+            })
+          );
 
-        gridCanvas.renderer?.render(gridCanvas.scene!, gridCanvas.camera!);
-        requestAnimationFrame(animate);
-      }
-    };
+          gridCanvas.renderer?.render(gridCanvas.scene!, gridCanvas.camera!);
+          requestAnimationFrame(animate);
+        } else {
+          resolve();
+        }
+      };
 
-    animate();
+      animate();
+    });
   }
 
-  moveBikeAlongPath(
+  private async moveBikeAlongPath(
     buildingA: Building,
     buildingB: Building,
     speed: number,
     bikeId: string
-  ) {
+  ): Promise<void> {
     if (!gridCanvas.scene || !gridCanvas.camera || !gridCanvas.renderer) return;
 
-    const building1 = `${buildingA.position[0]}_${buildingA.position[2]}`;
-    const building2 = `${buildingB.position[0]}_${buildingB.position[2]}`;
-
     const graph = buildGraph();
-    const path = findShortestPath(graph, building1, building2);
+    const path = findShortestPath(
+      graph,
+      `${buildingA.position[0]}_${buildingA.position[2]}`,
+      `${buildingB.position[0]}_${buildingB.position[2]}`
+    );
 
     if (path.length < 2) return; // No movement if path has less than 2 points
 
-    const splitPath = [] as [number, number, number][];
-    path.forEach(p => {
-      const [x,z] = p.split('_').map(Number);
-      const y = 0;
-
-      splitPath.push([x, y, z])
+    const splitPath: [number, number, number][] = path.map((p) => {
+      const [x, z] = p.split("_").map(Number);
+      return [x, 0, z];
     });
 
-    let currentIndex = 0;
+    for (let i = 0; i < splitPath.length - 1; i++) {
+      const start = splitPath[i];
+      const end = splitPath[i + 1];
+      await this.animateBike(start, end, speed, bikeId);
+    }
+  }
 
-    const moveToNextSegment = () => {
-      if (currentIndex >= splitPath.length - 1) return; // Reached the end of the path
+  async moveBikeThroughOrders(bike: Bike, speed: number): Promise<void> {
+    if (!bike.orders || bike.orders.length === 0) return;
 
-      const start = splitPath[currentIndex];
-      const end = splitPath[currentIndex + 1];
-
-      this.animateBike(start, end, speed, bikeId);
-
-      currentIndex++;
-
-      // Wait until the current segment animation completes before starting the next
-      const distance = new THREE.Vector3(...start).distanceTo(
-        new THREE.Vector3(...end)
+    for (const [index, order] of bike.orders.entries()) {
+      // Move to pickup location
+      await this.moveBikeAlongPath(
+        { position: bike.position } as Building,
+        order.pickup,
+        speed,
+        bike.id
       );
-      const duration = distance / speed; // Estimate time required to complete this segment
+      bike.position = order.pickup.position;
 
-      setTimeout(moveToNextSegment, duration * 20); // Call next segment after `duration`
-    };
+      // Move to drop-off location
+      await this.moveBikeAlongPath(order.pickup, order.dropOff, speed, bike.id);
+      bike.position = order.dropOff.position;
 
-    moveToNextSegment(); // Start moving
+      console.log(`Order ${index + 1} completed.`);
+    }
+
+    console.log(`${bike.info} has completed all orders!`);
   }
 }
