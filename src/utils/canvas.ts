@@ -68,10 +68,10 @@ export class GridCanvas {
     this.generateRoads(buildings);
 
     // Add bikes on the road
-    // const bikes = this.generateBikes(buildings)
+    const bikes = this.generateBikes(buildings)
 
     // Move bikes through orders
-    // bikes.forEach(bike => this.bikeElement.moveBikeThroughOrders(bike, 0.08));
+    bikes.forEach(bike => this.bikeElement.moveBikeThroughOrders(bike, 0.08));
   }
 
   private generateBikes(buildings: Building[], length = 2): Bike[] {

@@ -3,17 +3,19 @@ import { modifyWorld, World } from "../data/redux/reducers/worldReducer";
 import { store } from "../data/redux/store/reduxStore";
 import { gridCanvas } from "./canvas";
 import * as THREE from "three";
+import { CanvasClickEvent } from "./event/clickEvent";
+import { Bike } from "../data/redux/reducers/bikeReducer";
 
 
-export function handleNewOrder(e: MouseEvent, context: any) {
+export function handleNewOrder(e: MouseEvent, context: CanvasClickEvent) {
   if (!gridCanvas || !gridCanvas.scene) return;
 
   const buildings = store.getState().buildings.list;
 
   if (!buildings || buildings.length < 1) return;
 
-  const raycaster = context.raycaster as THREE.Raycaster;
-  const mouse = context.mouse as THREE.Vector2;
+  const raycaster = context.raycaster;
+  const mouse = context.mouse;
 
   // Calculate mouse position in normalized device coordinates (-1 to +1)
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -55,8 +57,75 @@ export function handleNewOrder(e: MouseEvent, context: any) {
         } as World));
         alert("Drop-off location selected, hold on to calculate ETA");
         (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
+
+        const features = getFeatures();
+
+        features.forEach((key) => {
+            makePrediction(key.get('feature') as number[]);
+        })
+
         return;
       }
     }
   }
+}
+
+function makePrediction(features: number[]) {
+    console.log(features);
+}
+
+function getFeatures(): Map<string, number[] | Bike>[] {
+    const features = [] as Map<string, number[] | Bike>[];
+
+    const bikes = store.getState().bikes.list;
+    const world = store.getState().world;
+
+    bikes.forEach(bike => {
+        const accDistanceFromHereToPickup = getAccDistanceFromHereToPickup(bike, world);
+        const currentOrders = bike.orders.length;
+        const distanceToDropOff = calculateDistance(world.orderPickupBuilding?.position!, world.orderDropOffBuilding?.position!);
+
+        const feature = new Map();
+
+        feature.set('feature', [accDistanceFromHereToPickup, currentOrders, distanceToDropOff]);
+        feature.set('bike', bike);
+
+        features.push(feature)
+    });
+
+    return features;
+}
+
+function getAccDistanceFromHereToPickup(bike: Bike, world: World): number {
+    let totalDistance = 0;
+
+    for(let i = 0; i < bike.orders.length; i++) {
+        if(i === 0) {
+            // Calculate distance from bike's current location to
+            // the rider's current order's dropoff location
+            totalDistance += calculateDistance(bike.position, bike.orders[i].dropOff.position);
+        } else {
+            totalDistance += calculateDistance(bike.orders[i].pickup.position, bike.orders[i].dropOff.position);
+        }
+
+        if((i + 1) < bike.orders.length){
+            // Calculate the distance from the current order's
+            // dropoff location to the next order's pickup
+            totalDistance += calculateDistance(bike.orders[i].dropOff.position, bike.orders[i + 1].pickup.position);
+        }
+
+        if(i === bike.orders.length){
+            // Calculate the distance from the last order
+            // to the new order's pickup location
+            totalDistance += calculateDistance(bike.orders[i].dropOff.position, world.orderPickupBuilding?.position!);
+        }
+    }
+
+    return totalDistance;
+}
+
+function calculateDistance(start: number[], end: number[]): number {
+    const startVec = new THREE.Vector3(...start);
+      const endVec = new THREE.Vector3(...end);
+      return startVec.distanceTo(endVec);
 }

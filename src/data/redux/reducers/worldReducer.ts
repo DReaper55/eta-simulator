@@ -9,7 +9,7 @@ export interface World {
 }
 
 const initialState: World = {
-  actionMode: ActionType.Explore,
+  actionMode: ActionType.Test,
   orderPickupBuilding: undefined,
   orderDropOffBuilding: undefined
 };
