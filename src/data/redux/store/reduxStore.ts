@@ -4,6 +4,7 @@ import roadsReducer from "../reducers/roadReducer";
 import bikesReducer from "../reducers/bikeReducer";
 import buildingReducer from "../reducers/buildingReducer";
 import animationReducer from "../reducers/animationReducer";
+import worldReducer from "../reducers/worldReducer";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     bikes: bikesReducer,
     buildings: buildingReducer,
     animations: animationReducer,
+    world: worldReducer,
   },
 });
 

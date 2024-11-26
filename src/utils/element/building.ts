@@ -16,7 +16,7 @@ export class BuildingElement implements ElementUtils<Building> {
     const material = new THREE.MeshStandardMaterial({ color: data.color });
     const building = new THREE.Mesh(geometry, material);
     building.position.set(...data.position);
-    building.userData = {info: data.info, type: ElementType.Building}
+    building.userData = {info: data.info, type: ElementType.Building, id: data.id}
     gridCanvas.scene?.add(building);
   }
 
