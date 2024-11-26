@@ -1,56 +1,62 @@
 import { ElementType } from "../constants/element";
-import { Building } from "../data/redux/reducers/buildingReducer";
+import { modifyWorld, World } from "../data/redux/reducers/worldReducer";
 import { store } from "../data/redux/store/reduxStore";
 import { gridCanvas } from "./canvas";
 import * as THREE from "three";
 
-let pickupBuilding: Building | undefined;
-let dropOffBuilding: Building | undefined;
 
-function addNewOrder() {
+export function handleNewOrder(e: MouseEvent, context: any) {
   if (!gridCanvas || !gridCanvas.scene) return;
 
-    const buildings = store.getState().buildings.list;
+  const buildings = store.getState().buildings.list;
 
-    if(!buildings || buildings.length < 1) return;
+  if (!buildings || buildings.length < 1) return;
 
-  alert("Click on a building to choose the pickup location.");
+  const raycaster = context.raycaster as THREE.Raycaster;
+  const mouse = context.mouse as THREE.Vector2;
 
-  // Setup click listener for building selection
-  gridCanvas.scene.children.forEach((object) => {
-    if (object instanceof THREE.Mesh) {
-      // Check if the object is a Mesh
-      const mesh = object as THREE.Mesh; // Typecast to Mesh
-      mesh.userData.originalColor = (
-        mesh.material as THREE.MeshStandardMaterial
-      ).color.getHex(); // Save original color
-      (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight building
+  // Calculate mouse position in normalized device coordinates (-1 to +1)
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-      mesh.onClick = () => {
-        if (!pickupBuilding) {
-          pickupBuilding = buildings.find(b => b.id === mesh.userData.id); // Save as pickup
-          alert("Pickup location selected. Now choose a drop-off location.");
-          (mesh.material as THREE.MeshStandardMaterial).color.set(
-            mesh.userData.originalColor
-          ); // Reset color
-        } else if (!dropOffBuilding) {
-          dropOffBuilding = buildings.find(b => b.id === mesh.userData.id); // Save as drop-off
-          alert("Drop-off location selected.");
+  // Update the raycaster with the camera and mouse position
+  raycaster.setFromCamera(mouse, gridCanvas.camera!);
 
-          //   finalizeOrder(pickupBuilding, dropOffBuilding);
+  // Find intersected objects in the scene
+  const intersects = raycaster.intersectObjects(
+    gridCanvas.scene.children,
+    true
+  );
 
-          // Reset colors and remove listeners
-          gridCanvas.scene!.children.forEach((b) => {
-            if (b instanceof THREE.Mesh) {
-              b.material.color.set(b.userData.originalColor || 0xffffff);
-              b.onClick = null;
-            }
-          });
+  if (intersects.length > 0) {
+    const clickedObject = intersects[0].object;
 
-          pickupBuilding = undefined;
-          dropOffBuilding = undefined;
-        }
+    if (clickedObject instanceof THREE.Mesh) {
+      const mesh = clickedObject as THREE.Mesh;
+
+      if(mesh.userData.type !== ElementType.Building) {
+        alert("Choose a Building object");
+        return;
       };
+ 
+      if(!store.getState().world.orderPickupBuilding) {
+        store.dispatch(modifyWorld({
+            orderPickupBuilding: buildings.find((b) => b.id === mesh.userData.id),
+        } as World));
+        alert("Pickup location selected. Now choose a drop-off location.");
+        (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
+        clickedObject.material = mesh.material;
+        return;
+      }
+
+      if(store.getState().world.orderPickupBuilding) {
+        store.dispatch(modifyWorld({
+            orderDropOffBuilding: buildings.find((b) => b.id === mesh.userData.id),
+        } as World));
+        alert("Drop-off location selected, hold on to calculate ETA");
+        (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
+        return;
+      }
     }
-  });
+  }
 }

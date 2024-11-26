@@ -1,6 +1,7 @@
 import BottomToolbar from "../components/Homepage/BottomToolbar";
 import CanvasScene from "../components/Homepage/CanvasScene";
 import HoverPopup from "../components/Homepage/HoverPopup";
+import SwitchButton from "../components/Homepage/SwitchButton";
 
 const Homepage = () => {
     return (
@@ -8,6 +9,7 @@ const Homepage = () => {
             <CanvasScene />
             <HoverPopup />
             <BottomToolbar />
+            <SwitchButton />
         </div>
     )
 }

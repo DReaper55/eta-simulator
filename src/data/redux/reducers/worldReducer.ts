@@ -1,27 +1,29 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ActionType } from "../../../constants/actions";
+import { Building } from "./buildingReducer";
 
 export interface World {
   actionMode: string;
+  orderPickupBuilding: Building | undefined;
+  orderDropOffBuilding: Building | undefined;
 }
 
-interface WorldState {
-  actionMode: string;
-}
-
-const initialState: WorldState = {
+const initialState: World = {
   actionMode: ActionType.Explore,
+  orderPickupBuilding: undefined,
+  orderDropOffBuilding: undefined
 };
 
 const worldSlice = createSlice({
   name: "world",
   initialState,
   reducers: {
-    modifyCity: (state, action: PayloadAction<string>) => {
-      state.actionMode = action.payload;
+    modifyWorld: (state, action: PayloadAction<World>) => {
+      state = {...state, ...action.payload};
+      return state;
     },
   },
 });
 
-export const { modifyCity } = worldSlice.actions;
+export const { modifyWorld } = worldSlice.actions;
 export default worldSlice.reducer;
