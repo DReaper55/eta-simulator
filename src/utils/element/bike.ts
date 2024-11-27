@@ -32,7 +32,7 @@ export class BikeElement implements ElementUtils<Bike> {
     const bike = new THREE.Mesh(geometry, material);
     bike.name = data.id;
     bike.position.set(...data.position);
-    bike.userData = { info: data.info, type: ElementType.Bike };
+    bike.userData = { info: data.info, id: data.id, type: ElementType.Bike };
     gridCanvas.scene?.add(bike);
   }
 

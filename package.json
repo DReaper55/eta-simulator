@@ -13,6 +13,7 @@
     "@react-three/drei": "^9.117.2",
     "@react-three/fiber": "^8.17.10",
     "@reduxjs/toolkit": "^2.3.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "autoprefixer": "^10.4.20",
     "javascript-astar": "^0.4.1",
     "pathfinding": "^0.4.18",
