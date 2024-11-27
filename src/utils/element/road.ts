@@ -101,7 +101,7 @@ export class RoadElement implements ElementUtils<Road> {
   }
 
   connectBuildings(building1: Building, building2: Building): Road {
-    const height = 0.4; // Road thickness
+    const height = 0.05; // Road thickness
     const width = 1; // Road width
   
     // Calculate the center points of the two buildings

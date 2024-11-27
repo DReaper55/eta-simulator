@@ -2,7 +2,7 @@ import { ActionType } from "../../constants/actions";
 import { store } from "../../data/redux/store/reduxStore";
 import { GridCanvas, gridCanvas } from "../canvas";
 import * as THREE from "three";
-import { handleNewOrder } from "../handleNewOrder";
+import { handleNewOrder } from "../../services/orderHandler";
 
 export class CanvasClickEvent {
   isMouseDown = false;

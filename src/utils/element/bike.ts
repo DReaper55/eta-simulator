@@ -9,7 +9,7 @@ import {
 } from "../../data/redux/reducers/bikeReducer";
 import { gridCanvas } from "../canvas";
 import { ElementType } from "../../constants/element";
-import { buildGraph, findShortestPath } from "../buildPathGraph";
+import { buildGraph, findShortestPath } from "../../services/graphBuilder";
 import { Building } from "../../data/redux/reducers/buildingReducer";
 
 export class BikeElement implements ElementUtils<Bike> {

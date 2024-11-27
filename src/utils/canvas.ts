@@ -10,6 +10,8 @@ import { Bike } from "../data/redux/reducers/bikeReducer";
 import { CanvasEvent } from "./event";
 import { Order } from "../models/order";
 import { generateUUID } from "three/src/math/MathUtils.js";
+import { replaceBuildings } from "../services/modelAssetLoader";
+import { ElementType } from "../constants/element";
 
 export class GridCanvas {
   scene: THREE.Scene | undefined;
@@ -72,6 +74,12 @@ export class GridCanvas {
 
     // Move bikes through orders
     bikes.forEach(bike => this.bikeElement.moveBikeThroughOrders(bike, 0.08));
+
+    const buildingsModel = buildings.map(b => {
+      return {position: b.position, model: 'src/assets/models/building.glb', id: b.id, info: b.info, type: b.type};
+    });
+
+    replaceBuildings(buildingsModel);
   }
 
   private generateBikes(buildings: Building[], length = 2): Bike[] {
@@ -127,41 +135,46 @@ export class GridCanvas {
     buildings[0] = {
       id: "1",
       position: [0, 0, 0],
-      size: [2, 3, 2],
+      size: [2, 5, 2],
       color: "blue",
       info: "Building 0",
+      type: ElementType.Building,
     } as Building;
 
     buildings[1] = {
       id: "2",
       position: [5, 0, 0],
-      size: [2, 8, 2],
+      size: [2, 5, 2],
       color: "blue",
       info: "Building 1",
+      type: ElementType.Building,
     } as Building;
 
     buildings[2] = {
       id: "3",
       position: [0, 0, 5],
-      size: [3, 4, 2],
+      size: [2, 5, 2],
       color: "blue",
       info: "Building 2",
+      type: ElementType.Building,
     } as Building;
 
     buildings[3] = {
       id: "4",
       position: [0, 0, -5],
-      size: [3, 4, 2],
+      size: [2, 5, 2],
       color: "blue",
       info: "Building 3",
+      type: ElementType.Building,
     } as Building;
 
     buildings[4] = {
       id: "5",
       position: [-8, 0, 0],
-      size: [3, 5, 5],
+      size: [2, 5, 2],
       color: "blue",
       info: "Building 4",
+      type: ElementType.Building,
     } as Building;
 
     // Add buildings to scene
