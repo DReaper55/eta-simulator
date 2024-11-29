@@ -1,4 +1,5 @@
 import * as tf from "@tensorflow/tfjs";
+import { AssetPaths } from "../assets";
 
 
 interface ScalerData {
@@ -8,8 +9,8 @@ interface ScalerData {
 
 const loadScalerData = async (): Promise<ScalerData> => {
   const [meanResponse, scaleResponse] = await Promise.all([
-    fetch("src/assets/mean.json"),
-    fetch("src/assets/scale.json"),
+    fetch(AssetPaths.ETA_MODEL_MEAN),
+    fetch(AssetPaths.ETA_MODEL_SCALE),
   ]);
 
   const mean = await meanResponse.json();
@@ -33,7 +34,7 @@ let model: tf.LayersModel | null = null;
 
 const loadModel = async (): Promise<tf.LayersModel> => {
   if (!model) {
-    model = await tf.loadLayersModel("src/assets/model.json");
+    model = await tf.loadLayersModel(AssetPaths.ETA_MODEL);
   }
   return model;
 };

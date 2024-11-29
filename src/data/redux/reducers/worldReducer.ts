@@ -1,15 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ActionType } from "../../../constants/actions";
+import { WorldMode } from "../../../constants/world";
 import { Building } from "./buildingReducer";
 
 export interface World {
-  actionMode: string;
+  worldMode: string;
+  actionMode: string | null;
   orderPickupBuilding: Building | undefined;
   orderDropOffBuilding: Building | undefined;
 }
 
 const initialState: World = {
-  actionMode: ActionType.Test,
+  actionMode: null,
+  worldMode: WorldMode.Test,
   orderPickupBuilding: undefined,
   orderDropOffBuilding: undefined
 };

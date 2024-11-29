@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { modifyWorld, World } from "../../data/redux/reducers/worldReducer";
-import { ActionType } from "../../constants/actions";
+import { WorldMode } from "../../constants/world";
 
 const SwitchButton: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,11 +12,11 @@ const SwitchButton: React.FC = () => {
     setIsExplore(!isExplore);
 
     if (isExplore) {
-      dispatch(modifyWorld({ actionMode: ActionType.Test } as World));
+      dispatch(modifyWorld({ worldMode: WorldMode.Test } as World));
     }
 
     if (!isExplore) {
-      dispatch(modifyWorld({ actionMode: ActionType.Explore } as World));
+      dispatch(modifyWorld({ worldMode: WorldMode.Explore } as World));
     }
   };
 

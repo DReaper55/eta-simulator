@@ -47,6 +47,8 @@ export async function replaceBuildings(elements: any) {
             // }
         }
 
+        element.model = 
+
       await loadBuildingModel(element.model, element.position, element.info, element.type, element.id);
     }
 }

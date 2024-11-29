@@ -3,37 +3,22 @@ import { modifyWorld, World } from "../data/redux/reducers/worldReducer";
 import { store } from "../data/redux/store/reduxStore";
 import { gridCanvas } from "../utils/canvas";
 import * as THREE from "three";
-import { CanvasClickEvent } from "../utils/event/clickEvent";
+import { getClickedObject } from "../utils/event/clickEvent";
 import { Bike } from "../data/redux/reducers/bikeReducer";
 import { predictETA } from "./etaPredictor";
 import { Vector3, Camera } from 'three';
 
 
-export function handleNewOrder(e: MouseEvent, context: CanvasClickEvent) {
+export function handleNewOrder(e: MouseEvent) {
   if (!gridCanvas || !gridCanvas.scene) return;
 
   const buildings = store.getState().buildings.list;
 
   if (!buildings || buildings.length < 1) return;
 
-  const raycaster = context.raycaster;
-  const mouse = context.mouse;
+  
 
-  // Calculate mouse position in normalized device coordinates (-1 to +1)
-  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-  // Update the raycaster with the camera and mouse position
-  raycaster.setFromCamera(mouse, gridCanvas.camera!);
-
-  // Find intersected objects in the scene
-  const intersects = raycaster.intersectObjects(
-    gridCanvas.scene.children,
-    true
-  );
-
-  if (intersects.length > 0) {
-    const clickedObject = intersects[0].object;
+  const clickedObject = getClickedObject(e);
 
     if (clickedObject instanceof THREE.Mesh) {
       const mesh = clickedObject as THREE.Mesh;
@@ -75,7 +60,6 @@ export function handleNewOrder(e: MouseEvent, context: CanvasClickEvent) {
           const bike = key.get("bike") as Bike;
 
           const eta = await predictETA(feature);
-          // console.log(bike.id, feature, eta);
 
           displayETAPopup(bike, eta);
         });
@@ -83,7 +67,6 @@ export function handleNewOrder(e: MouseEvent, context: CanvasClickEvent) {
         return;
       }
     }
-  }
 }
 
 async function displayETAPopup(bike: Bike, eta: number) {

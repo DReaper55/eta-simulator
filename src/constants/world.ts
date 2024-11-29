@@ -1,4 +1,4 @@
-export const ActionType = {
+export const WorldMode = {
     Explore: 'explore',
     Test: 'test',
 }

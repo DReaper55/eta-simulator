@@ -12,6 +12,7 @@ import { Order } from "../models/order";
 import { generateUUID } from "three/src/math/MathUtils.js";
 import { replaceBuildings } from "../services/modelAssetLoader";
 import { ElementType } from "../constants/element";
+import { AssetPaths } from "../assets";
 
 export class GridCanvas {
   scene: THREE.Scene | undefined;
@@ -79,7 +80,7 @@ export class GridCanvas {
     bikes.forEach(bike => this.bikeElement.moveBikeThroughOrders(bike, 0.08));
 
     const buildingsModel = buildings.map(b => {
-      return {position: b.position, model: 'src/assets/models/building.glb', id: b.id, info: b.info, type: b.type};
+      return {position: b.position, model: AssetPaths.BUILDING_MODEL, id: b.id, info: b.info, type: b.type};
     });
 
     replaceBuildings(buildingsModel);

@@ -4,7 +4,7 @@ import { Building } from "../../data/redux/reducers/buildingReducer";
 import { Road } from "../../data/redux/reducers/roadReducer";
 import TextField from "../general/Textfield";
 import { ElementType } from "../../constants/element";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState, } from "../../data/redux/store/reduxStore";
 import { calculateDistance } from "../../services/orderHandler";
 
@@ -173,8 +173,6 @@ const RoadElement: React.FC<ElementProps> = ({ road }) => {
 };
 
 const SidePanel: React.FC = () => {
-  const dispatch = useDispatch();
-
   const buildings = useSelector(
     (state: RootState) => state.buildings.list as Building[]
   );
