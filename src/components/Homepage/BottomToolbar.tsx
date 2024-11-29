@@ -24,6 +24,7 @@ const BottomToolbar: React.FC = () => {
     switch(action){
       case ActionType.Order: return addNewOrder(); 
       case ActionType.Building: return addNewBuilding(); 
+      case ActionType.Road: return addNewRoad(); 
     }
   }
 
@@ -37,6 +38,12 @@ const BottomToolbar: React.FC = () => {
     toggleAnim();
     dispatch(modifyWorld({ actionMode: ActionType.Building } as World));
     setTimeout(() => alert("Click a point on the canvas"), 300);
+  };
+
+  const addNewRoad = () => {
+    toggleAnim();
+    dispatch(modifyWorld({ actionMode: ActionType.Road } as World));
+    setTimeout(() => alert("Choose a Building to build a road from"), 300);
   };
 
   return (

@@ -131,7 +131,7 @@ export class RoadElement implements ElementUtils<Road> {
     // Set road position
     road.position.set(midX, height / 2, midZ);
   
-    // Optional: Add metadata for hover interaction
+    // Add metadata for hover interaction
     road.userData = { type: ElementType.Road, info: `Road: ${building1.info} -> ${building2.info}` };
   
     // Add to the scene

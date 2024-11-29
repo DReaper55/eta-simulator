@@ -11,7 +11,7 @@ export interface World {
 
 const initialState: World = {
   actionMode: null,
-  worldMode: WorldMode.Test,
+  worldMode: WorldMode.Explore,
   orderPickupBuilding: undefined,
   orderDropOffBuilding: undefined
 };

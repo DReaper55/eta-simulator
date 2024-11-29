@@ -19,6 +19,9 @@ export class CanvasClickEvent {
   raycaster: THREE.Raycaster;
   canvas: GridCanvas;
 
+  selectedBuildings: Building[] = [];
+
+
   constructor() {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
@@ -51,7 +54,7 @@ export class CanvasClickEvent {
             position: [point.x, point.y, point.z],
             size: [2, 5, 2],
             color: "blue",
-            info: `Building ${store.getState().buildings.list.length - 1}`,
+            info: `Building ${store.getState().buildings.list.length}`,
             type: ElementType.Building,
           } as Building;
   
@@ -59,6 +62,54 @@ export class CanvasClickEvent {
 
           replaceBuildings([{position: b.position, model: AssetPaths.BUILDING_MODEL, id: b.id, info: b.info, type: b.type}])
         }
+      }
+
+      if(store.getState().world.actionMode === ActionType.Road) {
+        this.connectBuildings(e);
+      }
+    }
+  }
+
+  private connectBuildings(e: MouseEvent) {
+    if (!gridCanvas || !gridCanvas.scene) return;
+  
+    const buildings = store.getState().buildings.list;
+  
+    if (!buildings || buildings.length < 1) return;
+  
+    const clickedObject = getClickedObject(e);
+  
+    if (clickedObject instanceof THREE.Mesh) {
+      const mesh = clickedObject as THREE.Mesh;
+  
+      if (mesh.userData.type !== ElementType.Building) {
+        alert("Choose a Building object");
+        return;
+      }
+
+      const foundBuilding = buildings.find(b => b.id === clickedObject.userData.id);
+
+      if(!foundBuilding) {
+        alert("Couldn't find building data, please refresh and try again");
+        return;
+      }
+  
+      if (this.selectedBuildings.length === 0) {
+        this.selectedBuildings.push(foundBuilding);
+        alert("Now choose the other building to connect a road to");
+        (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
+        return;
+      }
+  
+      if (this.selectedBuildings.length === 1) {
+        this.selectedBuildings.push(foundBuilding);
+        (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
+  
+        gridCanvas.roadElement.connectBuildings(this.selectedBuildings[0], this.selectedBuildings[1]);
+
+        this.selectedBuildings = [];
+
+        return;
       }
     }
   }

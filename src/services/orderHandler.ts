@@ -6,8 +6,7 @@ import * as THREE from "three";
 import { getClickedObject } from "../utils/event/clickEvent";
 import { Bike } from "../data/redux/reducers/bikeReducer";
 import { predictETA } from "./etaPredictor";
-import { Vector3, Camera } from 'three';
-
+import { Vector3, Camera } from "three";
 
 export function handleNewOrder(e: MouseEvent) {
   if (!gridCanvas || !gridCanvas.scene) return;
@@ -16,62 +15,60 @@ export function handleNewOrder(e: MouseEvent) {
 
   if (!buildings || buildings.length < 1) return;
 
-  
-
   const clickedObject = getClickedObject(e);
 
-    if (clickedObject instanceof THREE.Mesh) {
-      const mesh = clickedObject as THREE.Mesh;
+  if (clickedObject instanceof THREE.Mesh) {
+    const mesh = clickedObject as THREE.Mesh;
 
-      if (mesh.userData.type !== ElementType.Building) {
-        alert("Choose a Building object");
-        return;
-      }
-
-      if (!store.getState().world.orderPickupBuilding) {
-        store.dispatch(
-          modifyWorld({
-            orderPickupBuilding: buildings.find(
-              (b) => b.id === mesh.userData.id
-            ),
-          } as World)
-        );
-        alert("Pickup location selected. Now choose a drop-off location.");
-        (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
-        clickedObject.material = mesh.material;
-        return;
-      }
-
-      if (store.getState().world.orderPickupBuilding) {
-        store.dispatch(
-          modifyWorld({
-            orderDropOffBuilding: buildings.find(
-              (b) => b.id === mesh.userData.id
-            ),
-          } as World)
-        );
-        alert("Drop-off location selected, hold on to calculate ETA");
-        (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
-
-        const features = getFeatures();
-
-        features.forEach(async (key) => {
-          const feature = key.get("feature") as number[];
-          const bike = key.get("bike") as Bike;
-
-          const eta = await predictETA(feature);
-
-          displayETAPopup(bike, eta);
-        });
-
-        return;
-      }
+    if (mesh.userData.type !== ElementType.Building) {
+      alert("Choose a Building object");
+      return;
     }
+
+    if (!store.getState().world.orderPickupBuilding) {
+      store.dispatch(
+        modifyWorld({
+          orderPickupBuilding: buildings.find((b) => b.id === mesh.userData.id),
+        } as World)
+      );
+      alert("Pickup location selected. Now choose a drop-off location.");
+      (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
+      clickedObject.material = mesh.material;
+      return;
+    }
+
+    if (store.getState().world.orderPickupBuilding) {
+      store.dispatch(
+        modifyWorld({
+          orderDropOffBuilding: buildings.find(
+            (b) => b.id === mesh.userData.id
+          ),
+        } as World)
+      );
+      alert("Drop-off location selected, hold on to calculate ETA");
+      (mesh.material as THREE.MeshStandardMaterial).color.set(0x00ff00); // Highlight
+
+      const features = getFeatures();
+
+      features.forEach(async (key) => {
+        const feature = key.get("feature") as number[];
+        const bike = key.get("bike") as Bike;
+
+        const eta = await predictETA(feature);
+
+        displayETAPopup(bike, eta);
+      });
+
+      return;
+    }
+  }
 }
 
 async function displayETAPopup(bike: Bike, eta: number) {
   // Get the bike object in the scene
-  const bikeMesh = gridCanvas.scene?.children.find((obj) => obj.userData.id === bike.id);
+  const bikeMesh = gridCanvas.scene?.children.find(
+    (obj) => obj.userData.id === bike.id
+  );
   if (!bikeMesh) return;
 
   // Convert bike's 3D position to 2D screen coordinates
@@ -113,7 +110,10 @@ async function displayETAPopup(bike: Bike, eta: number) {
 }
 
 // Utility function to convert 3D world position to 2D screen position
-function toScreenPosition(position: Vector3, camera: Camera): { x: number; y: number } {
+function toScreenPosition(
+  position: Vector3,
+  camera: Camera
+): { x: number; y: number } {
   const vector = position.clone().project(camera);
   const canvas = gridCanvas.renderer!.domElement;
 
