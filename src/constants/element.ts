@@ -1,6 +1,6 @@
 export const ElementType = {
-    Road: 'road',
-    Building: 'building',
-    City: 'city',
-    Bike: 'bike'
+    Road: 'Road',
+    Building: 'Building',
+    City: 'City',
+    Bike: 'Bike'
   }

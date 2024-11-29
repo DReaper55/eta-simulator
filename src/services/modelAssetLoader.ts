@@ -13,8 +13,6 @@ async function loadBuildingModel(url: string, position: [number, number, number]
         gltf.scene.traverse((child) => {
             if ((child as THREE.Mesh).isMesh) {
                 child.userData = {info: info, type: type, id: id}
-                child.castShadow = true;
-                child.receiveShadow = true;
             }
         });
 

@@ -35,7 +35,10 @@ export class GridCanvas {
       this.camera = camera;
       this.renderer = renderer;
 
-      // Set lightinh
+      this.camera.position.set(5, 15, 0);
+      this.camera.lookAt(0, 0, 0);
+
+      // Set lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       this.scene.add(ambientLight);
 

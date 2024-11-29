@@ -212,7 +212,7 @@ function getAccDistanceFromHereToPickup(bike: Bike, world: World): number {
   return totalDistance;
 }
 
-function calculateDistance(start: number[], end: number[]): number {
+export function calculateDistance(start: number[], end: number[]): number {
   const startVec = new THREE.Vector3(...start);
   const endVec = new THREE.Vector3(...end);
   return startVec.distanceTo(endVec);

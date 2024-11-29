@@ -32,14 +32,14 @@ const bikesSlice = createSlice({
       state.list.push({...action.payload, type: ElementType.Bike});
     },
     modifyBike: (state, action: PayloadAction<BikePayload>) => {
-      state.list.map((bike) =>
+      state.list = state.list.map((bike) =>
         bike.id === action.payload.id
           ? { ...bike, ...action.payload.data, type: ElementType.Bike }
           : bike
       );
     },
     removeBike: (state, action: PayloadAction<String>) => {
-      state.list.map((bike) => bike.id !== action.payload && bike);
+      state.list = state.list.filter((bike) => bike.id !== action.payload);
     },
   },
 });

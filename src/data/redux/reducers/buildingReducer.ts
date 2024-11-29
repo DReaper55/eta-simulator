@@ -29,23 +29,24 @@ const buildingSlice = createSlice({
   initialState,
   reducers: {
     addBuilding: (state, action: PayloadAction<Building>) => {
-      state.list.push({...action.payload, type: ElementType.Building});
+      state.list.push({ ...action.payload, type: ElementType.Building });
     },
     modifyBuilding: (state, action: PayloadAction<BuildingPayload>) => {
-      state.list.map((building) =>
+      state.list = state.list.map((building) =>
         building.id === action.payload.id
           ? { ...building, ...action.payload.data, type: ElementType.Building }
           : building
       );
     },
-    removeBuilding: (state, action: PayloadAction<String>) => {
-      state.list.map((building) => building.id !== action.payload && building);
+    removeBuilding: (state, action: PayloadAction<string>) => {
+      state.list = state.list.filter((building) => building.id !== action.payload);
     },
-    clearBuildings(state) {
-        state.list = [];
+    clearBuildings: (state) => {
+      state.list = [];
     },
   },
 });
 
-export const { addBuilding, modifyBuilding, removeBuilding, clearBuildings } = buildingSlice.actions;
+export const { addBuilding, modifyBuilding, removeBuilding, clearBuildings } =
+  buildingSlice.actions;
 export default buildingSlice.reducer;
