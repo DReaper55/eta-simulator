@@ -8,10 +8,11 @@ export interface Bike {
   roadId: string;
   info?: string;
   type: string;
+  eta?: number;
   orders: Order[];
 }
 
-interface BikePayload {
+export interface BikePayload {
   id: string;
   data: Partial<Bike>;
 }

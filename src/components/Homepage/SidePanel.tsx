@@ -5,15 +5,41 @@ import { Road } from "../../data/redux/reducers/roadReducer";
 import TextField from "../general/Textfield";
 import { ElementType } from "../../constants/element";
 import { useSelector } from "react-redux";
-import { RootState, } from "../../data/redux/store/reduxStore";
+import { RootState } from "../../data/redux/store/reduxStore";
 import { calculateDistance } from "../../services/orderHandler";
-
+import { Order } from "../../models/order";
+import { World } from "../../data/redux/reducers/worldReducer";
+import { generateUUID } from "three/src/math/MathUtils.js";
 
 interface ElementProps {
   building?: Building;
   bike?: Bike;
   road?: Road;
+  order?: Order;
 }
+
+const OrderElement: React.FC<ElementProps> = ({ order }) => {
+  if (!order) return <></>;
+
+  return (
+    <>
+      <h3 className="font-bold">Order: #{order.id}</h3>
+      {/* Pickup */}
+      <div className="flex flex-row space-x-10 pt-4 w-[100%]">
+        <span> Pickup: </span>
+
+        <span>{order.pickup.info}</span>
+      </div>
+
+      {/* Drop-off location */}
+      <div className="flex flex-row space-x-10 pt-4 w-[100%]">
+        <span> Drop-off: </span>
+
+        <span>{order.dropOff.info}</span>
+      </div>
+    </>
+  );
+};
 
 const BuildingElement: React.FC<ElementProps> = ({ building }) => {
   if (!building) return <></>;
@@ -93,6 +119,23 @@ const BikeElement: React.FC<ElementProps> = ({ bike }) => {
           />
         </div>
       </div>
+
+      {/* Orders */}
+      <div className="flex flex-col pt-10 w-[100%]">
+        <span className="pb-4"> Orders </span>
+
+        {bike.orders &&
+          bike.orders.map((order) => {
+            return <OrderElement order={order} />;
+          })}
+      </div>
+
+      {/* Eta for new order */}
+      {bike.eta && (<div className="flex flex-row justify-between pt-10 w-[100%]">
+        <span> ETA for new order: </span>
+
+        <span>{bike.eta}</span>
+      </div>)}
     </>
   );
 };
@@ -181,6 +224,8 @@ const SidePanel: React.FC = () => {
 
   const bikes = useSelector((state: RootState) => state.bikes.list as Bike[]);
 
+  const world = useSelector((state: RootState) => state.world as World);
+
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const categories = [ElementType.Bike, ElementType.Building, ElementType.Road];
@@ -249,6 +294,20 @@ const SidePanel: React.FC = () => {
           )}
         </div>
       ))}
+
+      {world.orderPickupBuilding && world.orderDropOffBuilding && (
+        <div className="p-2 bg-white rounded mb-2 w-full">
+          <OrderElement
+            order={
+              {
+                id: generateUUID(),
+                pickup: world.orderPickupBuilding,
+                dropOff: world.orderDropOffBuilding,
+              } as Order
+            }
+          />
+        </div>
+      )}
     </div>
   );
 };

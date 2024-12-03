@@ -27,7 +27,7 @@ const CanvasScene: React.FC = () => {
       <SceneManipulator />
 
       <gridHelper
-        args={[10, 10, new THREE.Color("gray"), new THREE.Color("white")]}
+        args={[30, 10, new THREE.Color("gray"), new THREE.Color("gray")]}
       />
     </Canvas>
   );

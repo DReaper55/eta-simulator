@@ -4,7 +4,7 @@ import { store } from "../data/redux/store/reduxStore";
 import { gridCanvas } from "../utils/canvas";
 import * as THREE from "three";
 import { getClickedObject } from "../utils/event/clickEvent";
-import { Bike } from "../data/redux/reducers/bikeReducer";
+import { Bike, BikePayload, modifyBike } from "../data/redux/reducers/bikeReducer";
 import { predictETA } from "./etaPredictor";
 import { Vector3, Camera } from "three";
 
@@ -57,6 +57,8 @@ export function handleNewOrder(e: MouseEvent) {
         const eta = await predictETA(feature);
 
         displayETAPopup(bike, eta);
+
+        store.dispatch(modifyBike({id: bike.id, data: {...bike, eta: eta} as Bike} as BikePayload));
       });
 
       return;
