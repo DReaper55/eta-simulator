@@ -1,6 +1,6 @@
 # React 3D Building Project
 
-This project demonstrates a 3D web application where users can interact with and dynamically add 3D models (e.g., buildings) to a canvas, along with functionality for calculating ETAs, displaying information in a side panel, and managing assets within a containerized Docker setup.
+This project demonstrates a 3D web application where users can interact with and dynamically add 3D models (e.g., buildings, bikes, roads etc.) to a canvas, along with functionality for calculating ETAs from an ETA predictor model for a bike to handle deliveries between buildings, displaying information in a side panel, and managing assets within a containerized Docker setup.
 
 ---
 
@@ -21,8 +21,8 @@ This project demonstrates a 3D web application where users can interact with and
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/react-3d-project.git
-   cd react-3d-project
+   git clone https://github.com/DReaper55/eta-simulator.git
+   cd eta-simulator
    ```
 
 2. Install dependencies:
@@ -42,12 +42,12 @@ This project demonstrates a 3D web application where users can interact with and
 ### Building and Running the Docker Image
 1. Build the Docker image:
    ```bash
-   docker build -t react-3d-project .
+   docker build -t eta-simulator .
    ```
 
 2. Run the container:
    ```bash
-   docker run -p 3000:3000 react-3d-project
+   docker run -p 3000:3000 eta-simulator
    ```
 
 3. Access the application in your browser at `http://localhost:3000`.
